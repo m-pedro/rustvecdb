@@ -1,6 +1,6 @@
 # rustvecdb
 
-A high-performance, persistent vector database written in Rust. Supports loop-unrolled `L2`, `Cosine`, and `DotProduct` distance kernels, exact `FlatIndex` search, 4x-compressed **8-bit Scalar Quantization (`SQ8`)**, multi-layer **Hierarchical Navigable Small World (`HNSW`)** approximate nearest-neighbor indexing, structured metadata filtering, and CRC32 Write-Ahead Log (`WAL`) persistence.
+A high-performance, persistent vector database written in Rust. Supports loop-unrolled `L2`, `Cosine`, and `DotProduct` distance kernels, exact `FlatIndex` search, 4x-compressed 8-bit Scalar Quantization (`SQ8`), multi-layer Hierarchical Navigable Small World (`HNSW`) approximate nearest-neighbor indexing, structured metadata filtering, and CRC32 Write-Ahead Log (`WAL`) persistence.
 
 ## 15-Day Incremental Engineering Roadmap (Month 3, Days 76–90)
 
