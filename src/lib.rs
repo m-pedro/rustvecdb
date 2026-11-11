@@ -5,4 +5,5 @@ pub mod flat;
 pub mod hnsw;
 pub mod metadata;
 pub mod quantization;
+pub mod server;
 pub mod wal;
