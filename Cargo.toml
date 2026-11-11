@@ -13,3 +13,7 @@ crc32fast = "1.4"
 [dev-dependencies]
 tempfile = "3.10"
 criterion = "0.5"
+
+[[bench]]
+name = "vecdb_bench"
+harness = false
