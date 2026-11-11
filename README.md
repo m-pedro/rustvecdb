@@ -59,10 +59,10 @@ The graph construction and beam-search routines in `src/hnsw.rs` follow the nota
 | Symbol | Parameter / Variable in `src/hnsw.rs` | Algorithmic Meaning |
 | :--- | :--- | :--- |
 | **`ep`** | `entry_point` / `curr_ep` | **Entry Point:** The node ID where graph traversal begins on a given layer. Starts at the global top-layer node and updates at each layer transition as greedy search descends toward layer `0`. |
-| **`lc`** | `lc` ($l_c$) | **Layer Counter:** The current hierarchy level being traversed or linked during top-down search (`for lc in (0..=top_connect_layer).rev()`). Layer `max_layer` is the sparsest routing layer; layer `0` contains every vector in the index. |
+| **`lc`** | `lc` | **Layer Counter:** The current hierarchy level being traversed or linked during top-down search (`for lc in (0..=top_connect_layer).rev()`). Layer `max_layer` is the sparsest routing layer; layer `0` contains every vector in the index. |
 | **`ef`** | `ef` (`ef_construction` / `ef_search`) | **Exploration Factor (Beam Width):** The capacity of the dynamic candidate priority queue maintained during `search_layer`. On upper layers (`lc >= 1`), `ef = 1` performs a fast greedy 1-NN walk; on layer `0`, `ef > 1` explores multiple candidate paths to escape local minima and maximize Recall@$k$. |
 | **`M`** | `m` / `m_max0` | **Max Out-Degree:** Maximum number of bidirectional edges per node on upper layers (`m = 16`) and on the base layer (`m_max0 = 32`). |
-| **`m_L`** | `level_mult` ($1 / \ln(M)$) | **Level Normalization Factor:** Controls the exponential decay probability $l = \lfloor -\ln(\text{uniform}(0,1)) \cdot m_L \rfloor$ when assigning a newly inserted vector to its highest layer. |
+| **`m_L`** | `level_mult` (`1.0 / ln(M)`) | **Level Normalization Factor:** Controls the exponential decay probability `level = floor(-ln(uniform(0, 1)) * m_L)` when assigning a newly inserted vector to its highest layer. |
 
 ---
 
