@@ -1,6 +1,6 @@
 # rustvecdb
 
-A persistent, high-performance vector database written from scratch in Rust. Implements 4-way loop-unrolled `L2`, `Cosine`, and `DotProduct` similarity kernels, exact `FlatIndex` top-$k$ search, 4x-compressed **8-bit Scalar Quantization (`SQ8`)**, multi-layer **Hierarchical Navigable Small World (`HNSW`)** graph indexing, compound boolean metadata filtering, CRC32 Write-Ahead Log (`WAL`) durability, and an HTTP/1.1 JSON query server.
+A persistent, high-performance vector database written from scratch in Rust. Implements 4-way loop-unrolled `L2`, `Cosine`, and `DotProduct` similarity kernels, exact `FlatIndex` top-$k$ search, 4x-compressed 8-bit Scalar Quantization (`SQ8`), multi-layer Hierarchical Navigable Small World (`HNSW`) graph indexing, compound boolean metadata filtering, CRC32 Write-Ahead Log (`WAL`) durability, and an HTTP/1.1 JSON query server.
 
 ---
 
@@ -76,7 +76,7 @@ Run locally via `cargo bench --bench vecdb_bench -- --quick`:
 | `kernel_cosine_128d` | 128-D Cosine Distance (`f32`) | ~38.2 ns | Simultaneous dot + L2 norm accumulation |
 | `search_hnsw_ann_1000x128d_top10` | Top-10 HNSW Graph Search ($N=1000$) | ~18.6 µs | $>97\%$ Recall@10 vs exact brute-force |
 | `search_flat_exact_1000x128d_top10` | Top-10 Exact `FlatIndex` ($N=1000$) | ~31.5 µs | 100% exact ground-truth baseline |
-| `search_sq8_quantized_1000x128d_top10` | Top-10 `SQ8` Asymmetric Scan | ~44.0 µs | **4.00x lower RAM** (`128 B` vs `512 B`/vec) |
+| `search_sq8_quantized_1000x128d_top10` | Top-10 `SQ8` Asymmetric Scan | ~44.0 µs | 4.00x lower RAM (`128 B` vs `512 B`/vec) |
 
 ---
 
