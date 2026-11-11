@@ -367,7 +367,12 @@ impl HnswIndex {
             ep = self.search_layer_greedy(query, ep, lc);
         }
 
-        let ef = self.params.ef_search.max(k * 2);
+        // Expand beam width when a metadata filter is active
+        let ef = if filter.is_some() {
+            (self.params.ef_search * 4).max(k * 8)
+        } else {
+            self.params.ef_search.max(k * 2)
+        };
         let candidates = self.search_layer(query, ep, ef, 0);
 
         let mut results = Vec::new();
@@ -380,11 +385,30 @@ impl HnswIndex {
                         metadata: node.metadata.clone(),
                     });
                     if results.len() == k {
-                        break;
+                        return Ok(results);
                     }
                 }
             }
         }
+
+        // If a selective metadata filter pruned the HNSW neighborhood below k,
+        // perform an exact filtered fallback scan to guarantee complete top-k results.
+        if let Some(f) = filter {
+            let mut exact: Vec<SearchResult> = self
+                .nodes
+                .values()
+                .filter(|n| f.matches(&n.metadata))
+                .map(|n| SearchResult {
+                    id: n.id,
+                    distance: self.metric.distance(query, &n.vector),
+                    metadata: n.metadata.clone(),
+                })
+                .collect();
+            exact.sort_by(|a, b| a.distance.total_cmp(&b.distance).then_with(|| a.id.cmp(&b.id)));
+            exact.truncate(k);
+            return Ok(exact);
+        }
+
         Ok(results)
     }
 }
@@ -415,5 +439,28 @@ mod tests {
         }
         let hits = idx.search(&[42.1, 84.1, 0.0, 1.0], 3).unwrap();
         assert_eq!(hits[0].id, 42);
+    }
+
+    #[test]
+    fn test_hnsw_filtered_search_with_selective_predicate() {
+        use crate::metadata::AttrValue;
+        let mut idx = HnswIndex::new(4, Metric::L2, HnswParams::default()).unwrap();
+        for i in 0..120u64 {
+            let mut meta = Metadata::new();
+            meta.insert(
+                "tier".into(),
+                AttrValue::Str(if i % 20 == 0 { "rare".into() } else { "common".into() }),
+            );
+            idx.upsert(i, vec![i as f32, 0.0, 0.0, 0.0], meta).unwrap();
+        }
+        let filter = Filter::Eq {
+            field: "tier".into(),
+            value: AttrValue::Str("rare".into()),
+        };
+        let hits = idx.search_with_filter(&[39.0, 0.0, 0.0, 0.0], 3, Some(&filter)).unwrap();
+        assert_eq!(hits.len(), 3);
+        assert_eq!(hits[0].id, 40);
+        assert_eq!(hits[1].id, 20);
+        assert_eq!(hits[2].id, 60);
     }
 }
