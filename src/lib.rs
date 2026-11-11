@@ -4,3 +4,4 @@ pub mod flat;
 pub mod hnsw;
 pub mod metadata;
 pub mod quantization;
+pub mod wal;
